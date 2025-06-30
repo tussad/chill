@@ -9,7 +9,7 @@
       margin: 0;
       overflow: hidden;
       height: 100vh;
-      background: radial-gradient(circle at center, #5e2a84, #1a002d);
+      background: radial-gradient(circle at center, #3a0141, #0d001b);
       font-family: 'Arial', sans-serif;
       position: relative;
     }
@@ -18,22 +18,23 @@
       position: absolute;
       top: -50px;
       white-space: nowrap;
-      color: pink;
       font-weight: bold;
-      opacity: 0.8;
+      opacity: 0.9;
+      color: #ffb6ff;
+      text-shadow: 0 0 8px #ffccff, 0 0 12px #ffc6f8;
       animation: fall linear;
     }
 
     @keyframes fall {
       0% {
-        transform: translateY(-100px) rotate(0deg);
+        transform: translateY(-100px);
         opacity: 0;
       }
       10% {
         opacity: 1;
       }
       100% {
-        transform: translateY(110vh) rotate(360deg);
+        transform: translateY(110vh);
         opacity: 0;
       }
     }
@@ -70,9 +71,9 @@
     }, 8000);
   }
 
-  // Loop tạo mới mỗi 200ms
   setInterval(createFallingText, 200);
 </script>
 
 </body>
 </html>
+
