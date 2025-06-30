@@ -9,7 +9,9 @@
       margin: 0;
       overflow: hidden;
       height: 100vh;
-      background: radial-gradient(circle at center, #3a0141, #0d001b);
+      background: 
+        radial-gradient(circle at center, #3a0141, #0d001b),
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 800 800"><g fill="rgba(255,182,255,0.3)"><circle cx="400" cy="400" r="1.5"/><circle cx="200" cy="200" r="1"/><circle cx="600" cy="150" r="1.2"/><circle cx="250" cy="500" r="1.3"/><circle cx="700" cy="600" r="1"/><circle cx="100" cy="300" r="1.5"/><circle cx="500" cy="200" r="1.1"/><circle cx="300" cy="700" r="1.4"/><circle cx="650" cy="350" r="1.2"/></g></svg>');
       font-family: 'Arial', sans-serif;
       position: relative;
     }
@@ -19,23 +21,65 @@
       top: -50px;
       white-space: nowrap;
       font-weight: bold;
-      opacity: 0.9;
+      opacity: 0;
       color: #ffb6ff;
-      text-shadow: 0 0 8px #ffccff, 0 0 12px #ffc6f8;
-      animation: fall linear;
+      text-shadow: 
+        0 0 8px #ff66ff,
+        0 0 15px #ff33ff,
+        0 0 20px #ff00ff;
+      animation: fall linear forwards;
+      will-change: transform, opacity;
+      z-index: 2;
     }
 
     @keyframes fall {
       0% {
-        transform: translateY(-100px);
+        transform: translateY(-100px) rotate(-5deg);
         opacity: 0;
       }
       10% {
         opacity: 1;
       }
+      90% {
+        opacity: 1;
+      }
       100% {
-        transform: translateY(110vh);
+        transform: translateY(110vh) rotate(5deg);
         opacity: 0;
+      }
+    }
+
+    .star {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 50%;
+      animation: twinkle 5s infinite ease-in-out alternate;
+      z-index: 1;
+      box-shadow: 0 0 10px 1px white;
+    }
+
+    @keyframes twinkle {
+      0% { opacity: 0.3; transform: scale(0.8); }
+      50% { opacity: 1; transform: scale(1.2); }
+      100% { opacity: 0.3; transform: scale(0.8); }
+    }
+
+    .heart {
+      position: absolute;
+      pointer-events: none;
+      animation: float 5s ease-in-out infinite;
+      z-index: 3;
+      filter: drop-shadow(0 0 8px #ff00ff);
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0) rotate(0deg) scale(1);
+      }
+      50% {
+        transform: translateY(-25px) rotate(15deg) scale(1.3);
       }
     }
   </style>
@@ -44,14 +88,28 @@
 
 <script>
   const messages = [
-    "Anh yêu em 💕",
-    "love you ❤️",
-    "mãi mãi iu em 🥰",
-    "iu cục cưng 💓",
-    "anh thương bé 💗",
-    "mãi iu 🫶",
-    "Anh mãi bên em 💖"
+    "Anh yêu em 💕", "love you ❤️", "mãi mãi iu em 🥰", 
+    "iu cục cưng 💓", "anh thương bé 💗", "mãi iu 🫶", 
+    "Anh mãi bên em 💖", "Em là tất cả 💘", "Nhớ em nhiều 💝", 
+    "Yêu em nhất 💞", "Hôn em 💋", "Nhớ em 😘", "Thương em lắm 💟",
+    "Bé cưng 💝", "Tình yêu của anh 💗", "Mãi không phai 💖"
   ];
+
+  // Tạo sao lấp lánh
+  function createStars() {
+    for (let i = 0; i < 200; i++) {
+      const star = document.createElement("div");
+      star.classList.add("star");
+      star.style.left = Math.random() * 100 + "vw";
+      star.style.top = Math.random() * 100 + "vh";
+      const size = Math.random() * 3 + 1;
+      star.style.width = size + "px";
+      star.style.height = size + "px";
+      star.style.animationDelay = Math.random() * 5 + "s";
+      star.style.animationDuration = (Math.random() * 3 + 3) + "s";
+      document.body.appendChild(star);
+    }
+  }
 
   function createFallingText() {
     const text = document.createElement("div");
@@ -59,18 +117,65 @@
     text.innerText = messages[Math.floor(Math.random() * messages.length)];
 
     // Random style
-    text.style.left = Math.random() * 100 + "vw";
-    text.style.fontSize = (Math.random() * 20 + 16) + "px";
-    text.style.animationDuration = (Math.random() * 4 + 3) + "s";
+    const leftPos = Math.random() * 100;
+    text.style.left = leftPos + "vw";
+    text.style.fontSize = (Math.random() * 12 + 18) + "px";
+    const duration = Math.random() * 2 + 4; // Giữ nguyên tốc độ rơi
+    text.style.animationDuration = duration + "s";
+    text.style.opacity = Math.random() * 0.4 + 0.6;
+    
+    // Hiệu ứng đung đưa
+    text.style.transformOrigin = `${Math.random() * 100}% 0`;
+    
+    // Random delay
+    text.style.animationDelay = (Math.random() * 0.5) + "s";
 
     document.body.appendChild(text);
 
-    // Remove after falling
+    // Xóa sau khi rơi
     setTimeout(() => {
       text.remove();
-    }, 8000);
+    }, (duration + 1) * 1000);
+
+    // 30% cơ hội tạo trái tim
+    if(Math.random() > 0.7) {
+      createHeart(leftPos);
+    }
   }
 
+  function createHeart(leftPos) {
+    const heart = document.createElement("div");
+    heart.classList.add("heart");
+    heart.innerHTML = ["❤️", "💖", "💗", "💘"][Math.floor(Math.random() * 4)];
+    heart.style.left = (parseFloat(leftPos) + Math.random() * 10 - 5) + "vw";
+    heart.style.top = "-50px";
+    heart.style.fontSize = (Math.random() * 24 + 24) + "px";
+    heart.style.animationDuration = (Math.random() * 3 + 4) + "s";
+    heart.style.opacity = Math.random() * 0.6 + 0.4;
+    
+    document.body.appendChild(heart);
+    
+    setTimeout(() => {
+      heart.remove();
+    }, 7000);
+  }
+
+  // Khởi tạo
+  createStars();
+  
+  // Tạo hiệu ứng ban đầu dày đặc
+  for(let i = 0; i < 40; i++) {
+    setTimeout(() => {
+      createFallingText();
+    }, i * 75);
+  }
+
+  // Giữ nguyên tốc độ tạo mới nhưng tăng mật độ
+  setInterval(createFallingText, 100);
+</script>
+
+</body>
+</html>
   setInterval(createFallingText, 200);
 </script>
 
